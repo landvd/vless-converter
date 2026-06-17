@@ -18,7 +18,37 @@ class ConverterTest(unittest.TestCase):
 
     def test_parse_vless_link(self):
         # 验证 VLESS 链接能解析成后续生成 YAML 所需的字段。
-        self.assertEqual(parse_vless_link(self.vless_link), self.node)
+        parsed_node = parse_vless_link(self.vless_link)
+
+        for key, value in self.node.items():
+            self.assertEqual(parsed_node[key], value)
+
+    def test_parse_vless_link_with_reality_params(self):
+        # 验证 Reality 相关 URL 参数会被解析到节点字典中。
+        reality_link = (
+            "vless://7e4d608f-2061-4eea-bba6-0b46c39c13fe@"
+            "bwg-five.us.fengqi0216.top:443?"
+            "type=tcp&encryption=none&security=reality&"
+            "pbk=2A4OL5PWDBcY8-QmrqlHft06j3iqRg5g3kgUd185mQg&"
+            "fp=chrome&sni=emby.vickypig.com&sid=341d&"
+            "flow=xtls-rprx-vision#test-node"
+        )
+        expected = {
+            "uuid": "7e4d608f-2061-4eea-bba6-0b46c39c13fe",
+            "server": "bwg-five.us.fengqi0216.top",
+            "port": 443,
+            "name": "test-node",
+            "network": "tcp",
+            "encryption": "none",
+            "security": "reality",
+            "pbk": "2A4OL5PWDBcY8-QmrqlHft06j3iqRg5g3kgUd185mQg",
+            "fp": "chrome",
+            "sni": "emby.vickypig.com",
+            "sid": "341d",
+            "flow": "xtls-rprx-vision",
+        }
+
+        self.assertEqual(parse_vless_link(reality_link), expected)
 
     def test_generate_clash_node(self):
         # 验证单个 Clash 节点 YAML 的字段和缩进。
