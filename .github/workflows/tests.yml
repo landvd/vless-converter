@@ -1,18 +1,32 @@
-strategy:
-  matrix:
-    python-version: ["3.11"]
+name: Run Tests
 
-steps:
-  - name: Checkout code
-    uses: actions/checkout@v4
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-  - name: Setup Python
-    uses: actions/setup-python@v5
-    with:
-      python-version: ${{ matrix.python-version }}
+jobs:
+  test:
+    runs-on: ubuntu-latest
 
-  - name: Show Python version
-    run: python --version
+    strategy:
+      matrix:
+        python-version: ["3.11"]
 
-  - name: Run unit tests
-    run: python -m unittest discover -s tests -v
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Show Python version
+        run: python --version
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
