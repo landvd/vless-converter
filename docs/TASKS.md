@@ -95,3 +95,33 @@ proxies:
 状态：
 
 TODO
+
+## TASK-005
+
+名称：
+
+模块化重构
+
+目标：
+
+将 converter.py 拆分为：
+
+- parser.py
+- generator.py
+- converter.py
+
+要求：
+
+- parser.py 负责 VLESS 解析
+- generator.py 负责 Clash YAML 生成
+- converter.py 负责统一导出接口
+- 不新增功能
+- 现有测试全部通过
+
+验收标准：
+
+python3 -m unittest discover -s tests
+
+状态：
+
+TODO

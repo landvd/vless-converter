@@ -1,9 +1,10 @@
-## **CHANGELOG.md**
+- # **Changelog**
 
-# **Changelog**
+  ## **v0.1.0**
 
-## **v0.1.0**
+  ### **Added**
 
-- 初始化项目结构
-- 建立PRD
-- 建立Task系统
+  - TASK-001 Parse VLESS URL
+  - TASK-002 Generate Clash Node
+  - TASK-003 Generate Complete Clash YAML
+  - TASK-004 Add Automated Tests
