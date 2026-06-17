@@ -13,7 +13,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Create GitHub Release
+      - uses: actions/checkout@v4
+
+      # 构建发布 ZIP，产物路径为 dist/vless-converter.zip。
+      - name: Build Artifact
+        run: |
+          chmod +x scripts/build.sh
+          ./scripts/build.sh
+
+      # 创建 GitHub Release，并自动上传构建好的 ZIP 文件。
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          files: |
+            dist/vless-converter.zip
           generate_release_notes: true
