@@ -10,15 +10,16 @@
 
 输入：
 
-vless://xxxx
+vless://uuid@server:443?...#name
 
 输出：
 
 {
- server,
- port,
- uuid
- }
+    "uuid": "7e4d608f-2061-4eea-bba6-0b46c39c13fe",
+    "server": "bwg-five.us.fengqi0216.top",
+    "port": 443,
+    "name": "test-node"
+}
 
 验收标准：
 
