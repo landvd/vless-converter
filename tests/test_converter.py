@@ -1,7 +1,12 @@
 import unittest
 from pathlib import Path
 
-from src.converter import generate_clash_node, generate_clash_yaml, parse_vless_link
+from src.converter import (
+    convert_vless_links,
+    generate_clash_node,
+    generate_clash_yaml,
+    parse_vless_link,
+)
 
 
 class ConverterTest(unittest.TestCase):
@@ -114,6 +119,28 @@ class ConverterTest(unittest.TestCase):
         )
 
         self.assertEqual(generate_clash_yaml(self.node), expected)
+
+    def test_convert_vless_links(self):
+        # 验证多行 VLESS 文本会忽略空行，并生成多个 proxies 节点。
+        second_link = self.vless_link.replace("#test-node", "#backup-node")
+        vless_text = f"\n{self.vless_link}\n\n{second_link}\n"
+        expected = "\n".join(
+            [
+                "proxies:",
+                "  - name: test-node",
+                "    type: vless",
+                "    server: bwg-five.us.fengqi0216.top",
+                "    port: 443",
+                "    uuid: 7e4d608f-2061-4eea-bba6-0b46c39c13fe",
+                "  - name: backup-node",
+                "    type: vless",
+                "    server: bwg-five.us.fengqi0216.top",
+                "    port: 443",
+                "    uuid: 7e4d608f-2061-4eea-bba6-0b46c39c13fe",
+            ]
+        )
+
+        self.assertEqual(convert_vless_links(vless_text), expected)
 
 
 if __name__ == "__main__":
