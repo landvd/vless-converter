@@ -1,3 +1,6 @@
+import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -12,8 +15,9 @@ from src.converter import (
 class ConverterTest(unittest.TestCase):
     def setUp(self):
         # 从 samples/sample.txt 读取统一的 VLESS 示例，避免测试数据分散。
-        sample_path = Path(__file__).resolve().parents[1] / "samples" / "sample.txt"
-        self.vless_link = sample_path.read_text(encoding="utf-8").strip()
+        self.project_root = Path(__file__).resolve().parents[1]
+        self.sample_path = self.project_root / "samples" / "sample.txt"
+        self.vless_link = self.sample_path.read_text(encoding="utf-8").strip()
         self.node = {
             "uuid": "7e4d608f-2061-4eea-bba6-0b46c39c13fe",
             "server": "bwg-five.us.fengqi0216.top",
@@ -141,6 +145,35 @@ class ConverterTest(unittest.TestCase):
         )
 
         self.assertEqual(convert_vless_links(vless_text), expected)
+
+    def test_cli_prints_clash_yaml(self):
+        # 验证 CLI 读取输入文件后会把 Clash YAML 打印到标准输出。
+        result = subprocess.run(
+            [sys.executable, "src/cli.py", str(self.sample_path)],
+            cwd=self.project_root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(result.stdout, convert_vless_links(self.sample_path.read_text()))
+        self.assertEqual(result.stderr, "")
+
+    def test_cli_writes_clash_yaml_to_output_file(self):
+        # 验证 CLI 传入输出路径时会把 Clash YAML 写入文件。
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_path = Path(temp_dir) / "output.yaml"
+            result = subprocess.run(
+                [sys.executable, "src/cli.py", str(self.sample_path), str(output_path)],
+                cwd=self.project_root,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(result.stdout, "")
+            self.assertEqual(result.stderr, "")
+            self.assertEqual(output_path.read_text(encoding="utf-8"), convert_vless_links(self.sample_path.read_text()))
 
 
 if __name__ == "__main__":
