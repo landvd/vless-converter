@@ -64,6 +64,42 @@ class ConverterTest(unittest.TestCase):
 
         self.assertEqual(generate_clash_node(self.node), expected)
 
+    def test_generate_clash_node_with_reality_params(self):
+        # 验证 Reality VLESS 节点会输出 Clash 所需的 Reality 字段。
+        reality_node = {
+            "uuid": "7e4d608f-2061-4eea-bba6-0b46c39c13fe",
+            "server": "bwg-five.us.fengqi0216.top",
+            "port": 443,
+            "name": "test-node",
+            "network": "tcp",
+            "encryption": "none",
+            "security": "reality",
+            "pbk": "2A4OL5PWDBcY8-QmrqlHft06j3iqRg5g3kgUd185mQg",
+            "fp": "chrome",
+            "sni": "emby.vickypig.com",
+            "sid": "341d",
+            "flow": "xtls-rprx-vision",
+        }
+        expected = "\n".join(
+            [
+                "- name: test-node",
+                "  type: vless",
+                "  server: bwg-five.us.fengqi0216.top",
+                "  port: 443",
+                "  uuid: 7e4d608f-2061-4eea-bba6-0b46c39c13fe",
+                "  network: tcp",
+                "  tls: true",
+                "  client-fingerprint: chrome",
+                "  servername: emby.vickypig.com",
+                "  flow: xtls-rprx-vision",
+                "  reality-opts:",
+                "    public-key: 2A4OL5PWDBcY8-QmrqlHft06j3iqRg5g3kgUd185mQg",
+                "    short-id: 341d",
+            ]
+        )
+
+        self.assertEqual(generate_clash_node(reality_node), expected)
+
     def test_generate_clash_yaml(self):
         # 验证完整 Clash YAML 包含 proxies 根节点和节点列表。
         expected = "\n".join(
